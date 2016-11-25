@@ -13,7 +13,7 @@ class Model{
 		$this->_initDb();
 		$this->_initMongo();
 		$this->_initRedis();
-		$this->_initMemcached();
+		$this->_initMem();
 
 		$this->logs = new Logs();
 	}
@@ -49,12 +49,19 @@ class Model{
 
 	}
 
-	public function _initMemcached(){
-		// $this->mem = new Memcache();
-		// $this->mem->connect('127.0.0.1', '11211');
+	public function _initMem(){
+		
+		if (class_exists('memcached')){
+			$this->mem = new Memcached();
+		} else {
+			$this->mem = new Memcache();
+		}
 
-		$this->mem = new Memcached();
-		$this->mem->addServer('127.0.0.1', '11211');
+		$mem_list = array(
+			array('127.0.0.1', '11211'),
+		);
+
+		$this->mem->addServers($mem_list);
 	}
 
 

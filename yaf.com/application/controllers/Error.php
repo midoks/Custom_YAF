@@ -7,16 +7,16 @@ class ErrorController  extends BaseController{
 
 	public function errorAction($exception) {
 
-        switch ($exception->getCode()) {  
+        switch ($code = $exception->getCode()) {
             case YAF_ERR_NOTFOUND_MODULE:  
             case YAF_ERR_NOTFOUND_CONTROLLER:
             case YAF_ERR_NOTFOUND_ACTION:  
-            case YAF_ERR_NOTFOUND_VIEW:  
-                return $this->retJson(['ret_code'=>-1,'ret_msg'=>'error request !!']);
-                break;  
+            case YAF_ERR_NOTFOUND_VIEW:
+                // return $this->retJson(['ret_code'=>-1,'ret_msg'=>'error request !!']);
+                // break;  
             default :  
                 $message = $exception->getMessage();  
-                echo 0, ":", $exception->getMessage();  
+                echo $code, ":", $exception->getMessage();  
                 break;  
         } 
      } 
