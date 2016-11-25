@@ -23,18 +23,10 @@ class Model{
 		$this->db = mySqlDb::instance();
 		$this->db->register(array(
 			'master' => [
-				['db_host' 			=> '121.42.151.169',
-	 			'db_name' 			=> 'mdread',
-	 			'db_user' 			=> 'mdread_mac',
-	 			'db_pwd'  			=> 'cjs123QW',
-	 			'db_charset' 		=> 'utf8',
-	 			'db_table_prefix' 	=> 'md_'],
-			],
-			'slave' => [
-				['db_host' 			=> '121.42.151.169',
-	 			'db_name' 			=> 'mdread',
-	 			'db_user' 			=> 'mdread_mac',
-	 			'db_pwd'  			=> 'cjs123QW',
+				['db_host' 			=> '127.0.0.1',
+	 			'db_name' 			=> 'test',
+	 			'db_user' 			=> 'root',
+	 			'db_pwd'  			=> 'root',
 	 			'db_charset' 		=> 'utf8',
 	 			'db_table_prefix' 	=> 'md_'],
 			],
@@ -99,6 +91,11 @@ class Model{
 		$cache_time_params = isset($args[0])? $args[0]:1;
 		$key = 'sys_ml_'.md5($method.serialize($args));
 		array_shift($args);
+
+		if (!$this->mem){
+			$data = call_user_func_array(array($this, $relFunc), $args);
+			return $data;
+		}
 
 		$data = $this->mem->get($key);
 		if($data && !isset($_GET['_refresh'])){

@@ -14,14 +14,9 @@
 class Bootstrap extends Yaf_Bootstrap_Abstract{
 
     public function _initConfig() {
+    	
 		$config = Yaf_Application::app()->getConfig();
-
-		//var_dump($config);
-
 		Yaf_Registry::set("config", $config);
-		Yaf_Dispatcher::getInstance()->disableView();  
-
-		
     }
 
     public function _initDefaultName(Yaf_Dispatcher $dispatcher) {

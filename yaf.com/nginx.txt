@@ -1,0 +1,13 @@
+server {
+  listen ****;
+  server_name  domain.com;
+  root   document_root;
+  index  index.php index.html index.htm;
+ 
+   location  / { 
+        index public/index.php;
+        if (!-f $request_filename) {
+            rewrite ^/(.*) /public/index.php?$1 last;
+        }   
+   }   
+}
