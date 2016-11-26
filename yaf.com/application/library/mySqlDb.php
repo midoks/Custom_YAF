@@ -140,7 +140,7 @@ class mySqlDb{
 
 
 	public function debug($content, $fileName = 'content'){
-		$filename = APP_PATH.'logs/'.$fileName.'-'.date('Y-m-d').'.txt';
+		$filename = APP_PATH.'/logs/'.$fileName.'-'.date('Y-m-d').'.txt';
 		if(!file_exists($filename)){
 			touch($filename);
 			chmod($filename,0777);//权限改为777

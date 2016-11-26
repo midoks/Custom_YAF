@@ -1,0 +1,15 @@
+select * from md_test where id=1
+
+use time:0.0008699893951416
+select * from md_test where id=1
+
+use time:0.001568078994751
+select * from md_test where id=1
+
+use time:0.0016040802001953
+select * from md_test where id=1
+
+use time:0.0012531280517578
+select * from md_test where id=1
+
+use time:0.0027680397033691

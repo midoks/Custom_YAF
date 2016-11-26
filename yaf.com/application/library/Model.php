@@ -11,8 +11,8 @@ class Model{
 
 	public function __construct(){
 		$this->_initDb();
-		$this->_initMongo();
-		$this->_initRedis();
+		//$this->_initMongo();
+		//$this->_initRedis();
 		$this->_initMem();
 
 		$this->logs = new Logs();
@@ -24,7 +24,7 @@ class Model{
 		$this->db->register(array(
 			'master' => [
 				['db_host' 			=> '127.0.0.1',
-	 			'db_name' 			=> 'test',
+	 			'db_name' 			=> 'mdread',
 	 			'db_user' 			=> 'root',
 	 			'db_pwd'  			=> 'root',
 	 			'db_charset' 		=> 'utf8',
@@ -66,45 +66,36 @@ class Model{
 
 
 	public function __call($method, $args){
-
-		if (substr($method, -2) == 'WC') {
-			return $this->cacheMemWC($method, $args);
-		} else if (substr($method, -3) == 'WCL'){ 
-			return $this->cacheMemWCL($method, $args);
+		$suffix = '_with_mc';
+		if (substr($method, -strlen($suffix)) == $suffix) {
+			return $this->cache_with_mc($method, $args);
 		}
+		return false;
 	}
 
+	/**
+	 * @func (缓存在memcahed)解决雪崩事件
+	 */
+	public function cache_with_mc($method, $args){
 
-	public function cacheMemWC($method, $args){
-		$relFunc = substr($method, 0, strlen($method)-2);
-		$cache_time_params = isset($args[0])? $args[0]:1;
-		$key = 'sys_m_'.md5($method.serialize($args));
-		array_shift($args);
-
-		$data = $this->mem->get($key);
-		if( empty($data)  || isset($_GET['_refresh']) ){
-			$data = call_user_func_array(array($this, $relFunc), $args);
-			if($data){
-				$this->mem->set($key, $data, $cache_time_params);
-			}
-		}
-		return $data;
-	}
-
-	//解决雪崩事件
-	public function cacheMemWCL($method, $args){
+		var_dump($method, $args);
 		
-		$relFunc = substr($method, 0, strlen($method)-3);
-		$cache_time_params = isset($args[0])? $args[0]:1;
-		$key = 'sys_ml_'.md5($method.serialize($args));
+		$real_func = substr($method, 0, strlen($method)-strlen('_with_mc'));
+		$key = isset($args[0])? $args[0]:1;
+		$cache_time = isset($args[1])? $args[1]:1;
+		
 		array_shift($args);
 
 		if (!$this->mem){
-			$data = call_user_func_array(array($this, $relFunc), $args);
+			$data = call_user_func_array(array($this, $real_func), $args);
 			return $data;
 		}
 
 		$data = $this->mem->get($key);
+
+		var_dump($data);exit;
+
+		//调试时使用
 		if($data && !isset($_GET['_refresh'])){
 			return $data;
 		}else{
@@ -113,9 +104,9 @@ class Model{
 
 		//sleep(4);
 		if($result = $this->mem->add($key, null)){
-			$data = call_user_func_array(array($this, $relFunc), $args);
+			$data = call_user_func_array(array($this, $real_func), $args);
 			if(!empty($data)){
-				$this->mem->set($key, $data, $cache_time_params);
+				$this->mem->set($key, $data, $cache_time);
 			}
 		} else {
 			for($i=0; $i<20; $i++) { //4秒没有反应，就出白页吧，系统貌似已经不行了
@@ -130,17 +121,10 @@ class Model{
 		return $data;
 	}
 
-
-
-
 	/**
 	 *	@func 析构函数
 	 */
-	public function __destruct(){
-		//$this->mem = null;
-	}
-
-
+	public function __destruct(){}
 }
 
 ?>
