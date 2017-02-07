@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>{{$title}}</title>
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<script>!function(a,b){function c(){var b=f.getBoundingClientRect().width;b/i>540&&(b=540*i);var c=b/10;f.style.fontSize=c+"px",k.rem=a.rem=c}var d,e=a.document,f=e.documentElement,g=e.querySelector('meta[name="viewport"]'),h=e.querySelector('meta[name="flexible"]'),i=0,j=0,k=b.flexible||(b.flexible={});if(g){console.warn("");var l=g.getAttribute("content").match(/initial\-scale=([\d\.]+)/);l&&(j=parseFloat(l[1]),i=parseInt(1/j))}else if(h){var m=h.getAttribute("content");if(m){var n=m.match(/initial\-dpr=([\d\.]+)/),o=m.match(/maximum\-dpr=([\d\.]+)/);n&&(i=parseFloat(n[1]),j=parseFloat((1/i).toFixed(2))),o&&(i=parseFloat(o[1]),j=parseFloat((1/i).toFixed(2)))}}if(!i&&!j){var p=(a.navigator.appVersion.match(/android/gi),a.navigator.appVersion.match(/iphone/gi)),q=a.devicePixelRatio;i=p?q>=3&&(!i||i>=3)?3:q>=2&&(!i||i>=2)?2:1:1,j=1/i}if(f.setAttribute("data-dpr",i),!g)if(g=e.createElement("meta"),g.setAttribute("name","viewport"),g.setAttribute("content","initial-scale="+j+", maximum-scale="+j+", minimum-scale="+j+", user-scalable=no"),f.firstElementChild)f.firstElementChild.appendChild(g);else{var r=e.createElement("div");r.appendChild(g),e.write(r.innerHTML)}a.addEventListener("resize",function(){clearTimeout(d),d=setTimeout(c,300)},!1),a.addEventListener("pageshow",function(a){a.persisted&&(clearTimeout(d),d=setTimeout(c,300))},!1),"complete"===e.readyState?e.body.style.fontSize=12*i+"px":e.addEventListener("DOMContentLoaded",function(){e.body.style.fontSize=12*i+"px"},!1),c(),k.dpr=a.dpr=i,k.refreshRem=c,k.rem2px=function(a){var b=parseFloat(a)*this.rem;return"string"==typeof a&&a.match(/rem$/)&&(b+="px"),b},k.px2rem=function(a){var b=parseFloat(a)/this.rem;return"string"==typeof a&&a.match(/px$/)&&(b+="rem"),b}}(window,window.lib||(window.lib={}));</script>
+	<link rel="stylesheet" href="http://p5.yokacdn.com/pic/div/2016/products/hotwx/style/style.css">
+</head>
+<body>
+	<div class="container">
+		{{if !empty($groupInfo)}}
+		<div class="summary">
+			<div class="img-info">
+				<a href=""><img src="{{$groupInfo['image']}}" alt=""></a>
+				<!--打包类型 的按钮样式 data-detail是详情描述-->
+				<p>
+					{{if $groupInfo['is_buy']}}
+					<a href="javascript:void(0)" class="buy">已购买</a>
+					{{else}}
+					<a href="/order/create?order_type=2&p={{$groupInfo['id']}}" class="bglinear tobuy ys">预售价{{$groupInfo['price']}}元</a>
+					{{/if}}
+					<span data-detail="{{$groupInfo['detail']}}" class="preview view-detail">详情</span>
+				</p>
+			</div>
+			<div class="info">
+				<div class="price">
+					<span></span>{{$groupInfo['price']}}
+				</div>
+				<h1>{{$groupInfo['name']}}</h1>
+				<div class="line bglinear"></div>
+				<p>{{$groupInfo['description']}}</p>
+			</div>
+		</div>
+		{{/if}}
+		<!--自由组合入口-->
+		<!--
+		<div class="db">
+			<a href="/paper/freebuy">
+				<img src="http://p5.yokacdn.com/pic/div/2016/products/hotwx/images/db.png" alt="">
+			</a>
+		</div>
+		-->
+		<nav>
+			<a href="#" class="all on"></a>
+			<a href="/paper/subscribe" class="mylist"></a>
+		</nav>
+
+		<div class="list">
+
+			
+			{{if empty($rows)}}
+
+				<div class="list-item next">
+					<div class="next-content">
+						<div>
+							<p>敬请期待</p>
+							<h2>VOL.01</h2>
+						</div>
+					</div>
+				</div>
+			{{else}}
+				<div class="list-item next">
+					<div class="next-content">
+						<div>
+							<p>敬请期待</p>
+							<h2>VOL.{{$expect['num']}}</h2>
+						</div>
+					</div>
+				</div>
+				{{foreach $rows as $k=>$v}}
+
+					<div class="list-item">
+						<div class="img">
+							<img src="{{$v['image']}}" alt="">
+							<!-- <p class="buynum">
+								<span>{{$v['buycount']}}</span>已购买
+							</p> -->
+						</div>
+						<div class="btns">
+							{{if $v['isbuy']==1}}
+							<a href="javascript:void(0)" class="buy">已购买</a>
+							<a href="{{$v['link']}}" class="preview">观看</a>
+							{{else}}
+							<a href="/order/create?p={{$v['id']}}" class="bglinear tobuy">购买</a>
+							<a href="{{$v['link']}}" class="preview">预览</a>
+							{{/if}}
+						</div>
+						<p class="tags">
+							<span class="date">{{$v['date']}}</span>
+							
+							{{if $v['isbuy']==1}}
+							{{else}}
+							<span class="price">￥{{$v['price']}}</span>
+							{{/if}}
+						</p>
+					</div>
+
+				{{/foreach}}
+			{{/if}}
+		
+		</div>
+	</div>
+	<!--预售详情弹层-->
+	<div class="dialog dialog-detail">
+		<div class="content">
+			<h2>详情说明</h2>
+			<span class="close" onclick='document.querySelector(".dialog-detail").style.display = "none"'></span>
+			<p></p>
+		</div>
+	</div>
+	<script>
+		(function(){
+			var _vlist = document.querySelectorAll('.preview.view-detail');
+			var main = document.querySelector('.dialog-detail');
+			var box = document.querySelector('.dialog-detail p');
+			var windowHeight = document.documentElement.clientHeight;
+			if(_vlist){
+				for(var i=0;i<_vlist.length;i++){
+					_vlist[i].addEventListener('click',function(e){
+						e.preventDefault();
+						var detail = e.target.getAttribute('data-detail');
+						box.innerHTML = detail;
+						main.style.display = 'block'
+					},false)
+				}
+			}
+		})();
+	</script>
+</body>
+<!-- 统计数据页面 -->
+{{include file="public/datastatistics.html"}}
+
+</html>
