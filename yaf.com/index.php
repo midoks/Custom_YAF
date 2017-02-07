@@ -13,7 +13,7 @@ function catchErr(){
 
 //ini_set ('memory_limit', '1024M');
 define("APP_PATH", realpath(dirname(__FILE__) . '/'));
-$app  = new Yaf_Application(APP_PATH."/conf/application.ini");
+$app  = new Yaf_Application(APP_PATH."/config/application.ini");
 
 if (php_sapi_name() == 'cli'){
 

@@ -1,14 +1,10 @@
 <?php
 /**
- * 后台模块
- *
+ * Api模块
+ * 访问地址:/api/index/index
  */
-
 class IndexController extends Yaf_Controller_Abstract{
-
-	//访问地址:api/index/index
 	public function indexAction(){
-
 		$this->getView()->assign('content', 'Hello world');
 	}
 }
