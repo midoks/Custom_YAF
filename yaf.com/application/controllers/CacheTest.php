@@ -17,7 +17,7 @@ class CacheTestController extends Yaf_Controller_Abstract{
 
 		$obj = new CacheModel();
 
-		$data = $obj->test_with_mc('key_1',200);
+		$data = $obj->test_with_mc('key_1', 5);
 		var_dump($data);
 
 	}

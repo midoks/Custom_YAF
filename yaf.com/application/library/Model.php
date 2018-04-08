@@ -68,22 +68,35 @@ class Model{
 	public function __call($method, $args){
 		$suffix = '_with_mc';
 		if (substr($method, -strlen($suffix)) == $suffix) {
-			return $this->cache_with_mc($method, $args);
+			$method = substr($method, 0, strlen($method)-strlen($suffix));
+			return $this->cacheWithMc($method, $args);
 		}
 		return false;
 	}
 
 	/**
-	 * @func (缓存在memcahed)解决雪崩事件
+	 *	
 	 */
-	public function cache_with_mc($method, $args){
+	private function callUserFunc($method, $args){
+		if(empty($args)){
 
-		var_dump($method, $args);
-		
-		$real_func = substr($method, 0, strlen($method)-strlen('_with_mc'));
+		} else {
+
+		}
+
+	}
+
+	/**
+	 * @func (缓存在memcahed)解决雪崩问题
+	 * @
+	 * @explain https://timyang.net/programming/memcache-mutex/
+	 */
+	public function cacheWithMc($method, $args){
+
+		$real_func = $method;
 		$key = isset($args[0])? $args[0]:1;
 		$cache_time = isset($args[1])? $args[1]:1;
-		
+		array_shift($args);
 		array_shift($args);
 
 		if (!$this->mem){
@@ -93,7 +106,7 @@ class Model{
 
 		$data = $this->mem->get($key);
 
-		var_dump($data);exit;
+		var_dump($data);
 
 		//调试时使用
 		if($data && !isset($_GET['_refresh'])){
@@ -102,16 +115,22 @@ class Model{
 			$this->mem->delete($key);
 		}
 
-		//sleep(4);
-		if($result = $this->mem->add($key, null)){
+		$key_lock = $key.'_lock';
+		if($result = $this->mem->add($key_lock, null, 1)){
+			var_dump($result);
 			$data = call_user_func_array(array($this, $real_func), $args);
-			if(!empty($data)){
-				$this->mem->set($key, $data, $cache_time);
-			}
+
+			var_dump($data);
+
+
+			$this->mem->delete($key_lock);
+
+			// if(!empty($data)){
+			// 	$this->mem->set($key, $data, $cache_time);
+			// }
 		} else {
 			for($i=0; $i<20; $i++) { //4秒没有反应，就出白页吧，系统貌似已经不行了
 				sleep(0.2);
-				$this->logs->w($key.'_'.$i);
 				$data = $this->mem->get($key);
 				if ($data !== false){
 					break;
